@@ -8,7 +8,12 @@ import wolframalpha
 # Speech engine init
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[0].id) # 0 is male, 1 female
+engine.setProperty('voice', voices[1].id) # 0 is male, 1 female
+
+listener = sr.Recognizer()
+listener.pause_threshold = 2
+audioAdjusted = False
+
 activationWord = 'computer'
 
 # Browser Config
@@ -22,20 +27,19 @@ def speak(text, rate = 120):
 
 
 def parseCommand():
-    listener = sr.Recognizer()
     print('Listening for a command')
 
     with sr.Microphone() as source:
-        listener.pause_threshold = 2
+        if not audioAdjusted:
+            listener.adjust_for_ambient_noise(source)
         input_speech = listener.listen(source)
 
     try:
         print('Recognizing Speech...')
         query = listener.recognize_google(input_speech, language='en_us')
-        print(f'The input speech was: {query}')
+        print(f'The input was: {query}')
     except Exception as exception:
         print('Error transcribing speech')
-        speak('I did not quite catch that')
         print(exception)
         return 'None'
     
@@ -66,4 +70,9 @@ if __name__ == '__main__':
                 query = ' '.join(query[2:])
                 speak('Opening ' + query)
                 webbrowser.get('chrome').open_new_tab(query)
+
+            # Terminiate Assistant Program
+            if query[0] == 'shut' and query[1] == 'down' or query[0] == 'shutdown':
+                speak('Shutting Assistant Down')
+                break;
             

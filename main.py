@@ -1,14 +1,13 @@
 from datetime import datetime
 import speech_recognition as sr
-import wikipedia
-import wolframalpha
 import commands as command
 
 listener = sr.Recognizer()
 listener.pause_threshold = 2
 audioAdjusted = False
+gameMode = False
 
-activationWord = 'computer'
+activationWord = 'assistant'
 
 def parseCommand():
     print('Listening for a command')
@@ -31,26 +30,42 @@ def parseCommand():
 
 # Main Loop
 if __name__ == '__main__':
-    command.speak('Hello Max...')
+    command.speak('Hello. How can I help you?')
 
     while True:
         # Parse
         query = parseCommand().lower().split()
+        try:
+            if query[0] == activationWord:
+                query.pop(0)
+                if not gameMode:
+                    # List Commands
+                    if query[0] == 'say':
+                        command.hello(query)
+                    # Website Navigation
+                    if query[0] == 'go' and query[1] == 'to':
+                        command.openSite(query)
+                    if query[0] == 'open':
+                        command.openProgram(query)
+                    if query[0] == 'google' or query[0] == 'when' or query[0] == 'what' or query[0] == 'where' or query[0] == 'who' or query[0] == 'why':
+                        command.googleSearch(query)
+                    if query[0] == 'enter':
+                        if query[1] == 'game' and query[2] == 'mode':
+                            command.speak('Entering Game Mode')
+                            gameMode = True
+                    if query[0] == 'play' and query[query.__len__()-1] == 'youtube':
+                        command.playYoutube(query)
 
-        if query[0] == activationWord:
-            query.pop(0)
 
-            # List Commands
-            if query[0] == 'say':
-                command.hello(query)
-            # Website Navigation
-            if query[0] == 'go' and query[1] == 'to':
-                command.openSite(query)
-            if query[0] == 'open':
-                command.openProgram(query)
-
-            # Terminiate Assistant Program
-            if query[0] == 'shut' and query[1] == 'down' or query[0] == 'shutdown':
-                command.speak('Shutting Assistant Down')
-                break;
+                    # Terminiate Assistant Program
+                    if query[0] == 'shut' and query[1] == 'down' or query[0] == 'shutdown':
+                        command.speak('Shutting Assistant Down')
+                        break;
+                else:
+                    if query[0] == 'exit':
+                        if query[1] == 'game' and query[2] == 'mode':
+                            command.speak('Exiting Game Mode')
+                            gameMode = False
+        except:
+            continue
             

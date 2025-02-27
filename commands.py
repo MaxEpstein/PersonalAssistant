@@ -1,11 +1,17 @@
 import pyttsx3
 import webbrowser
 import os
+import re
+import wikipedia
+import pywhatkit as kit
+from transformers import pipeline
+# from gensim.summarization import summarize
 
 # Speech engine init
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id) # 0 is male, 1 female
+summarizer = pipeline("summarization", model="t5-small")
 
 # Browser Config
 chrome_path = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
@@ -39,3 +45,29 @@ def openProgram(query):
         os.system(query)
     except:
         speak(query + ' not found')
+
+def googleSearch(query):
+    searchResult = wikipedia.search(query[1:])
+    if not searchResult:
+        speak('Sorry, no results found')
+        return 'No result found'
+    try:
+        wikiPage = wikipedia.page(searchResult[0])
+    except wikipedia.DisambiguationError as error:
+        wikiPage = wikipedia.page(error.options[0])
+    print(wikiPage.title)
+    wikiSummary = str(wikiPage.summary)
+    wikiSummary = summarizer(wikiSummary, max_length=200, min_length=15, do_sample=False)
+    print(wikiSummary)
+    speak(wikiSummary)
+
+def getYTTerm(query):
+    pattern = r'play\s+(.*?)\s+on\s+youtube'
+    match = re.search(pattern, query, re.IGNORECASE)
+    return match.group(1) if match else None
+
+def playYoutube(query):
+    query = ' '.join(query)
+    searchTerm = getYTTerm(query)
+    speak('playing ' + searchTerm + ' on youtube')
+    kit.playonyt(searchTerm)

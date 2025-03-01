@@ -1,6 +1,7 @@
 from datetime import datetime
 import speech_recognition as sr
 import commands as command
+import spotifyControl as spotify
 
 listener = sr.Recognizer()
 listener.pause_threshold = 2
@@ -55,6 +56,8 @@ if __name__ == '__main__':
                             gameMode = True
                     if query[0] == 'play' and query[query.__len__()-1] == 'youtube':
                         command.playYoutube(query)
+                    if query[0] == 'play' and query[query.__len__()-1] == 'spotify':
+                        spotify.playSpotify(query)
 
 
                     # Terminiate Assistant Program

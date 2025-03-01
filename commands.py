@@ -5,7 +5,7 @@ import re
 import wikipedia
 import pywhatkit as kit
 from transformers import pipeline
-# from gensim.summarization import summarize
+import ollama
 
 # Speech engine init
 engine = pyttsx3.init()
@@ -47,19 +47,25 @@ def openProgram(query):
         speak(query + ' not found')
 
 def googleSearch(query):
-    searchResult = wikipedia.search(query[1:])
-    if not searchResult:
-        speak('Sorry, no results found')
-        return 'No result found'
-    try:
-        wikiPage = wikipedia.page(searchResult[0])
-    except wikipedia.DisambiguationError as error:
-        wikiPage = wikipedia.page(error.options[0])
-    print(wikiPage.title)
-    wikiSummary = str(wikiPage.summary)
-    wikiSummary = summarizer(wikiSummary, max_length=200, min_length=15, do_sample=False)
-    print(wikiSummary)
-    speak(wikiSummary)
+    prompt = " ".join(query)
+    speak("Generating Response")
+    response = ollama.generate(model="llama3.1", prompt=prompt)
+    output = response["response"].replace("\n", " ")
+    print(output)
+    # searchResult = wikipedia.search(query[1:])
+    # if not searchResult:
+    #     speak('Sorry, no results found')
+    #     return 'No result found'
+    # try:
+    #     wikiPage = wikipedia.page(searchResult[0])
+    # except wikipedia.DisambiguationError as error:
+    #     wikiPage = wikipedia.page(error.options[0])
+    # print(wikiPage.title)
+    # wikiSummary = str(wikiPage.summary)
+    if (output.len() > 200):
+        output = summarizer(output, max_length=200, min_length=15, do_sample=False)
+    print(output)
+    speak(output)
 
 def getYTTerm(query):
     pattern = r'play\s+(.*?)\s+on\s+youtube'

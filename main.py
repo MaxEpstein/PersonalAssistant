@@ -1,14 +1,17 @@
 from datetime import datetime
 import speech_recognition as sr
+import os
+from dotenv import load_dotenv
+
 import commands as command
 import spotifyControl as spotify
+
+load_dotenv()
 
 listener = sr.Recognizer()
 listener.pause_threshold = 2
 audioAdjusted = False
 gameMode = False
-
-activationWord = 'assistant'
 
 def parseCommand():
     print('Listening for a command')
@@ -37,7 +40,7 @@ if __name__ == '__main__':
         # Parse
         query = parseCommand().lower().split()
         try:
-            if query[0] == activationWord:
+            if query[0] == os.getenv("ACTIVATION_WORD"):
                 query.pop(0)
                 if not gameMode:
                     # List Commands

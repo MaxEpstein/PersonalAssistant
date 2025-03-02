@@ -2,20 +2,25 @@ import pyttsx3
 import webbrowser
 import os
 import re
-import wikipedia
 import pywhatkit as kit
-from transformers import pipeline
-import ollama
+from dotenv import load_dotenv
+load_dotenv()
+
+# 15 requests per minute, 1500 requests per day, 1M tokens per minute limit
+from google import genai
+from google.genai import types
 
 # Speech engine init
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id) # 0 is male, 1 female
-summarizer = pipeline("summarization", model="t5-small")
+# summarizer = pipeline("summarization", model="t5-small")
 
 # Browser Config
 chrome_path = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(chrome_path))
+
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def speak(text, rate = 140):
     engine.setProperty('rate', rate)
@@ -49,23 +54,9 @@ def openProgram(query):
 def googleSearch(query):
     prompt = " ".join(query)
     speak("Generating Response")
-    response = ollama.generate(model="llama3.1", prompt=prompt)
-    output = response["response"].replace("\n", " ")
-    print(output)
-    # searchResult = wikipedia.search(query[1:])
-    # if not searchResult:
-    #     speak('Sorry, no results found')
-    #     return 'No result found'
-    # try:
-    #     wikiPage = wikipedia.page(searchResult[0])
-    # except wikipedia.DisambiguationError as error:
-    #     wikiPage = wikipedia.page(error.options[0])
-    # print(wikiPage.title)
-    # wikiSummary = str(wikiPage.summary)
-    if (output.len() > 200):
-        output = summarizer(output, max_length=200, min_length=15, do_sample=False)
-    print(output)
-    speak(output)
+    repsonse = client.models.generate_content(model="gemini-2.0-flash", contents=prompt, config=types.GenerateContentConfig(max_output_tokens=500, temperature=0.5))
+    print(repsonse.text)
+    speak(repsonse.text)
 
 def getYTTerm(query):
     pattern = r'play\s+(.*?)\s+on\s+youtube'

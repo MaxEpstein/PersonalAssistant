@@ -47,30 +47,34 @@ if __name__ == '__main__':
                     if query[0] == 'say':
                         command.hello(query)
                     # Website Navigation
-                    if query[0] == 'go' and query[1] == 'to':
+                    elif query[0] == 'go' and query[1] == 'to':
                         command.openSite(query)
-                    if query[0] == 'open':
+                    elif query[0] == 'open':
                         command.openProgram(query)
-                    if query[0] == 'google' or query[0] == 'when' or query[0] == 'what' or query[0] == 'where' or query[0] == 'who' or query[0] == 'why':
+                    elif query[0] == 'google' or query[0] == 'when' or query[0] == 'what' or query[0] == 'where' or query[0] == 'who' or query[0] == 'why' and "spotify" not in query:
                         command.googleSearch(query)
-                    if query[0] == 'enter':
-                        if query[1] == 'game' and query[2] == 'mode':
-                            command.speak('Entering Game Mode')
+                    elif query[0] == 'enter':
+                        if query[1] == 'sleep' and query[2] == 'mode':
+                            command.speak('Entering sleep Mode')
                             gameMode = True
-                    if query[0] == 'play' and query[query.__len__()-1] == 'youtube':
+                    elif query[0] == 'play' and query[query.__len__()-1] == 'youtube':
                         command.playYoutube(query)
-                    if query[0] == 'play' and query[query.__len__()-1] == 'spotify':
-                        spotify.playSpotify(query)
+                    elif query[0] == 'play' or query[0] == 'pause':
+                        spotify.pausePlay(query)
+                    elif query[0] == 'skip' or query[0] == 'next':
+                        spotify.nextTrack()
+                    elif query[0] == 'set' or 'volume' in query:
+                        spotify.volume(query)
 
 
                     # Terminiate Assistant Program
-                    if query[0] == 'shut' and query[1] == 'down' or query[0] == 'shutdown':
+                    elif query[0] == 'shut' and query[1] == 'down' or query[0] == 'shutdown':
                         command.speak('Shutting Assistant Down')
                         break;
                 else:
                     if query[0] == 'exit':
-                        if query[1] == 'game' and query[2] == 'mode':
-                            command.speak('Exiting Game Mode')
+                        if query[1] == 'sleep' and query[2] == 'mode':
+                            command.speak('Exiting sleep Mode')
                             gameMode = False
         except:
             continue

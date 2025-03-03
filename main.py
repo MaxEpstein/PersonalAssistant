@@ -63,6 +63,10 @@ if __name__ == '__main__':
                         spotify.pausePlay(query)
                     elif query[0] == 'skip' or query[0] == 'next':
                         spotify.nextTrack()
+                    elif 'max' in query and 'volume' in query:
+                        query = "set spotify to volume 100"
+                        query = query.split()
+                        spotify.volume(query)
                     elif query[0] == 'set' or 'volume' in query:
                         spotify.volume(query)
 

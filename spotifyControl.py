@@ -29,6 +29,7 @@ def volume(query):
     if (volume.endswith('%')):
         volume = volume[:-1]
     try:
+        print(volume)
         sp.volume(int(volume))
         print("setting spotify volume to " + volume)
         speak("setting Spot-tea-Phi volume to " + volume)

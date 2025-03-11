@@ -2,6 +2,7 @@ import spotipy
 from commands import speak
 from spotipy.oauth2 import SpotifyOAuth
 import os
+import re
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -41,3 +42,19 @@ def volume(query):
     except:
         print("error changing spotify volume")
         speak("There was an error adjusting the volume. Please try again")
+
+def currentlyPlaying():
+    current = sp.currently_playing('US')
+    print(current.context.uri)
+    print(current + " is currently playing on Spotify")
+    speak(current + " is currently playing on Spotify")
+
+def getSongTerm(query):
+    pattern = r'play\s+(.+?)(?:\s+on\s+spotify)?$'
+    match = re.search(pattern, query, re.IGNORECASE)
+    return match.group(1) if match else None
+
+def playSong(query):
+    query = ' '.join(query)
+    songTerm = getSongTerm(query)
+    print("Playing " + songTerm + " on spotify")

@@ -16,14 +16,16 @@ gameMode = False
 def parseCommand():
     print('Listening for a command')
 
-    with sr.Microphone() as source:
-        if not audioAdjusted:
-            listener.adjust_for_ambient_noise(source)
-        input_speech = listener.listen(source)
+    # with sr.Microphone() as source:
+    #     if not audioAdjusted:
+    #         listener.adjust_for_ambient_noise(source)
+    #     input_speech = listener.listen(source)
 
     try:
         print('Recognizing Speech...')
-        query = listener.recognize_google(input_speech, language='en_us')
+        # query = listener.recognize_google(input_speech, language='en_us')
+        # Use for text input
+        query = input("Enter Command ")
         print(f'The input was: {query}')
     except Exception as exception:
         print('Error transcribing speech')
@@ -51,6 +53,8 @@ if __name__ == '__main__':
                         command.openSite(query)
                     elif query[0] == 'open':
                         command.openProgram(query)
+                    elif 'currently' in query and 'playing' in query:
+                        spotify.currentlyPlaying()
                     elif query[0] == 'google' or query[0] == 'when' or query[0] == 'what' or query[0] == 'where' or query[0] == 'who' or query[0] == 'why' and "spotify" not in query:
                         command.googleSearch(query)
                     elif query[0] == 'enter':
@@ -59,6 +63,10 @@ if __name__ == '__main__':
                             gameMode = True
                     elif query[0] == 'play' and query[query.__len__()-1] == 'youtube':
                         command.playYoutube(query)
+
+                    # Spotify Control
+                    elif query[0] == 'play' and query.__len__() > 1:
+                        spotify.playSong(query)
                     elif query[0] == 'play' or query[0] == 'pause':
                         spotify.pausePlay(query)
                     elif query[0] == 'skip' or query[0] == 'next':

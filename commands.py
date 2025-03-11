@@ -14,7 +14,6 @@ from google.genai import types
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id) # 0 is male, 1 female
-# summarizer = pipeline("summarization", model="t5-small")
 
 # Browser Config
 chrome_path = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
